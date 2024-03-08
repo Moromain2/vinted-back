@@ -10,11 +10,11 @@ const cors = require("cors");
 // Connexion à la BDD
 mongoose.connect(process.env.MONGODB_URI);
 
-// Permet d'autoriser ou non les demandes provenant de l'extérieur
-app.use(cors());
-
 // Création du serveur
 const app = express();
+
+// Permet d'autoriser ou non les demandes provenant de l'extérieur
+app.use(cors());
 
 // Permettre au serveur de récupérer éléments depuis le body
 app.use(express.json());
