@@ -11,7 +11,6 @@ const cors = require("cors");
 mongoose.connect(process.env.MONGODB_URI);
 
 // Permet d'autoriser ou non les demandes provenant de l'extérieur
-const cors = require("cors");
 app.use(cors());
 
 // Création du serveur
