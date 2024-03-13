@@ -83,10 +83,30 @@ router.put(
         for (let i = 0; i < queryKeys.length; i++) {
           // Variable contenant la clé à changer pour chaque tour de boucle (clé dynamique)
           const keyToUpdate = queryKeys[i];
-          // J'assigne chaque clé passée en paramètres à la clé correspondante dans l'objet updatedOffer
+          // J'assigne chaque clé passée en paramètres à la clé correspondante dans l'objet offer
           if (keyToUpdate === "product_price") {
             // S'il s'agit du prix, je le transforme en Number
             offer[keyToUpdate] = Number(req.body[keyToUpdate]);
+          } else if (
+            // S'il s'agit d'un élément du tableau product_details
+            keyToUpdate === "brand" ||
+            keyToUpdate === "size" ||
+            keyToUpdate === "condition" ||
+            keyToUpdate === "color" ||
+            keyToUpdate === "city"
+          ) {
+            // Boucle sur le tableau product_details
+            for (let i = 0; i < offer.product_details.length; i++) {
+              // Clé dynamique sur le tableau pour chaque tour de boucle
+              const productDetailsKey = Object.keys(
+                offer.product_details[i]
+              )[0];
+              // Si la clé correspond à la clé passée par le client
+              if (productDetailsKey === keyToUpdate) {
+                // Assignation de la nouvelle valeur
+                offer.product_details[i][keyToUpdate] = req.body[keyToUpdate];
+              }
+            }
           } else {
             offer[keyToUpdate] = req.body[keyToUpdate];
           }
