@@ -125,6 +125,37 @@ router.put(
   }
 );
 
+// Route pour supprimer une annonce
+router.delete("/offers/delete/:id", isAuthenticated, async (req, res) => {
+  try {
+    // Si les paramètres ID sont bien renseignés par le client
+    if (req.params.id) {
+      // Tableau contenant toutes les offres postées par l'utilisateur connecté
+      const authUserOffers = await Offer.find({
+        product_owner: req.authUser._id,
+      });
+      // Boucle sur le tableau des offres de l'utilisateur
+      for (let i = 0; i < authUserOffers.length; i++) {
+        // Si l'ID d'une de ses offres correspond à l'ID passé en paramètres
+        if (authUserOffers[i]._id.toString() === req.params.id) {
+          await Offer.findByIdAndDelete(req.params.id);
+          res.json({ message: "Your offer has been deleted" });
+        }
+      }
+      res.status(401).json({
+        message: "You need to be the owner of the offer you want to delete",
+      });
+    } else {
+      res.json({
+        message:
+          "Please indicate the ID of one of the offer you want to delete",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+});
+
 // Route pour consulter les annonces
 router.get("/offers", offersFilter, async (req, res) => {
   try {
