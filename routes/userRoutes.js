@@ -45,7 +45,7 @@ router.post("/user/signup", async (req, res) => {
     // Sauvegarde de l'utilisateur en BDD
     await newUser.save();
 
-    // Réponse au client > A CHANGER POUR UN RESPONSE OBJECT <<<<<
+    // Réponse au client
     const responseObj = {
       _id: newUser["_id"],
       token: newUser.token,

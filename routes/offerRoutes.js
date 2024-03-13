@@ -61,6 +61,50 @@ router.post(
   }
 );
 
+// Route pour modifier une annonce
+router.put(
+  "/offers/update/:id",
+  isAuthenticated,
+  fileUpload(),
+  async (req, res) => {
+    try {
+      // Variable ayant pour valeur l'offre passé passée en paramètres par le client (objet)
+      const offer = await Offer.findById(req.params.id);
+
+      const authUserId = req.authUser._id.toString(); // ID de l'utilisateur
+      const offerUserId = offer.product_owner.toString(); // ID de l'auteur de l'annonce
+
+      // Si l'utilisateur authentifié est celui qui a posté l'annonce passée en paramètres
+      if (authUserId === offerUserId) {
+        // Variable ayant pour valeur un tableau contenant les clés passées dans le body par le client
+        const queryKeys = Object.keys(req.body);
+
+        // Boucle sur le tableau des clés passées par le client
+        for (let i = 0; i < queryKeys.length; i++) {
+          // Variable contenant la clé à changer pour chaque tour de boucle (clé dynamique)
+          const keyToUpdate = queryKeys[i];
+          // J'assigne chaque clé passée en paramètres à la clé correspondante dans l'objet updatedOffer
+          if (keyToUpdate === "product_price") {
+            // S'il s'agit du prix, je le transforme en Number
+            offer[keyToUpdate] = Number(req.body[keyToUpdate]);
+          } else {
+            offer[keyToUpdate] = req.body[keyToUpdate];
+          }
+        }
+        // Sauvegarde de l'offre en BDD
+        await offer.save();
+        // Réponse au client : offre mise à jour
+        res.json(offer);
+      } else {
+        // Message d'erreur si l'utilisateur n'est pas l'auteur de l'offre
+        res.status(401).json({ message: "You are not this offer's owner." });
+      }
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  }
+);
+
 // Route pour consulter les annonces
 router.get("/offers", offersFilter, async (req, res) => {
   try {

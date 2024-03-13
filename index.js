@@ -32,6 +32,10 @@ app.use(userRoutes);
 const offerRoutes = require("./routes/offerRoutes");
 app.use(offerRoutes);
 
+app.get("/", (req, res) => {
+  res.json("Bienvenue sur la réplique de Vinted");
+});
+
 // Route 404
 app.all("*", (req, res) => {
   res.status(404).json({ message: "This route is not defined." });
